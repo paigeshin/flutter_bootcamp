@@ -1,0 +1,37 @@
+name: name_card_com
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  fonts:
+    - family: Pacifico
+      fonts:
+        - asset: fonts/Pacifico/Pacifico-Regular.ttf
+
+    - family: Source_Code_Pro
+      fonts:
+        - asset: fonts/Source_Code_Pro/SourceCodePro-Light.ttf
+
+  uses-material-design: true
+
+  assets:
+    - images/beautiful.jpg
+    - images/beautiful2.jpg
+
+
+
+
