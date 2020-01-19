@@ -43,7 +43,7 @@
 
             new Question(question: 'A slug\'s blood is green.', answer: true)
             
-- <Widget>[ ] 은 List<Widget>으로 대체 가능.
+- `<Widget>[]` 은 List<Widget>으로 대체 가능.
 - Dart에서 List는 Java의 Arraylist와 거의 똑같다.            
 
 20/01/18
