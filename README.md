@@ -1,6 +1,165 @@
 # flutter_bootcamp
 
+**20/01/25**
 
+
+- alignment: Alignment.bottomLeft,   ⇒ Container안에 있는 property임. 좀더 element들을 쉽게 positioning하게 도와준다.
+
+- bmi.toStringAsFixed(1); //Single Decimal Point    bmi는 double 값임. 
+
+- 화면 넘기기 !!! 중요 !!!
+                    
+1. 기본적인 화면 넘기기
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Screen2()),
+                )
+                
+2. 화면 죽이기
+                    
+              Navigator.pop(context);
+              
+3. 여러 화면 세팅
+
+                return MaterialApp(
+                  initialRoute: '/',
+                  routes: {
+                    '/' : (context) => Screen0(),
+                    '/first' : (context) => Screen1(),
+                    '/second' : (context) => Screen2(),
+                  }
+                );
+
+-> 호출
+
+            Navigator.pushNamed(context, '/second');
+                
+
+- 완전히 custom한 widget example
+
+            class RoundIconButton extends StatelessWidget {
+
+              RoundIconButton({@required this.icon});
+
+              final IconData icon;
+
+              @override
+              Widget build(BuildContext context) {
+                return RawMaterialButton(
+                  child: Icon(icon),
+                  constraints: BoxConstraints.tightFor(
+                    width: 56.0,
+                    height: 56.0,
+                  ),
+                  shape: CircleBorder(),
+                  fillColor: Color(0xFF4C4F5E),
+                  onPressed: (){},
+                );
+              }
+            }
+
+다른 built-in widget들이 어떻게 작성됬는가를 참고하여 만들면 더 빨리 만들 수 있다.
+
+
+- Slider 이용하기
+            
+            Slider(
+                  value: height.toDouble(),
+                  min: 120.0,
+                  max: 220.0,
+                  activeColor: Color(0xFFEB1555),
+                  inactiveColor: Color(0xFF8D8E98),
+                  onChanged: (double newValue){
+                      setState(() {
+                        height = newValue.round(); //int로 바꾸는 다른 방법. (반올림하고 int를 반환)
+                      });
+            },
+            
+    onChanged라는 event를 주목.
+    
+- Slider 꾸며주기
+
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                inactiveTrackColor: Color(0xFF8D8E98),
+                activeTrackColor: Colors.white,
+                thumbColor: Color(0xFFEB1555),
+                overlayColor: Color(0x15EB1555), //overlay color는 클릭했을 때 focus 되는 부분을 의미한다.
+                thumbShape: RoundSliderThumbShape(
+                    enabledThumbRadius: 15.0),
+                overlayShape: RoundSliderOverlayShape(
+                    overlayRadius: 30.0),
+              ),
+              child: Slider(
+                value: height.toDouble(),
+                min: 120.0,
+                max: 220.0,
+                onChanged: (double newValue) {
+                  setState(() {
+                    height = newValue
+                        .round(); //int로 바꾸는 다른 방법. (반올림하고 int를 반환)
+                  });
+                },
+              ),
+            ),
+            
+    패턴:
+        SliderTheme
+        data: SliderTheme.of(context).copyWith( )......
+        
+    activeTrackColor
+    inactiveTrackColor
+    thumbColor :  움직이는 부분..
+    overlayColor : focus 됬을 때..
+    thumbShape : 모양을 정해질 수 있음
+    overlayShape : focus 됬을 때 .... 
+            
+
+- Dart Function 
+
+        void main(){
+            int result = calculator(5, 8, multiply);
+        }
+
+        final Function calculator = (int n1, int n2, Function calculation){
+            return calculation(n1, n2);
+        }
+
+        int add(int n1, int n2){
+            return n1 + n2;
+        }
+
+        int multiply(int n1, int n2){
+            return n1 * n2;
+        }
+
+=> function을 parameter로 넘길 수 있다.
+
+        void main(){
+
+            Car myCar = Car(drive: slowDrive);
+            print(myCar.drive);
+
+            myCar.drive = fastDrive; //새로운 함수로 지정.
+
+        }
+
+        class Car {
+            Car({this.drive});
+
+            Function drive;
+        }
+
+        void slowDrive(){
+            print('driving slowly.');
+        }
+
+        void fastDrive(){
+            print('driving fast.');
+        }
+
+=> function을 생성자 value로 만들 수 있다. 
 
 **20/01/24**
 
