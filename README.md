@@ -1,5 +1,184 @@
 # flutter_bootcamp
 
+
+**20/01/26**
+
+- Dart Restful API, 실제 사용 예제
+
+데이터를 가져오는 부분 
+
+                void getLocationData() async {
+                  Location location = Location();
+
+                  await location.getCurrentLocation();
+
+                  latitude = location.latitude;
+                  longitude = location.longitude;
+
+                  NetworkHelper networkHelper = NetworkHelper(url: 'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
+
+                  var weatherData = await networkHelper.getData();
+                  print(weatherData);
+
+                }
+                
+네트워크 컨트롤러
+                    
+                import 'package:http/http.dart' as http;
+                import 'dart:convert';
+
+                import 'package:http/http.dart';
+
+                class NetworkHelper {
+
+                  NetworkHelper({this.url});
+
+                  final String url;
+
+                  Future getData() async {
+                    Response response = await get(url);
+
+                    if (response.statusCode == 200) {
+                      String data = response.body;
+                      return jsonDecode(data);
+                    } else {
+                      print(response.statusCode);
+                      return 'error';
+                    }
+                  }
+
+                }
+                
+
+- Dart Restful API, get
+
+https://pub.dev/packages/http#-installing-tab-](https://pub.dev/packages/http#-installing-tab-
+
+핵심 오브잭트 및 메소드
+1. Response
+2. await get( )    #post( )
+3. response.body
+4. jsonDecode( )
+
+            void getData() async {
+              Response response = await get('https://samples.openweathermap.org/data/2.5/forecast?id=524901&appid=b1b15e88fa797225412429c1c50c122a1');
+
+              if (response.statusCode == 200) {
+                String data = response.body;
+
+                var decodedData = jsonDecode(data);
+                var temperature = decodedData['list'][0]['main']['temp'];
+                var condition =  decodedData['list'][0]['weather'][0]['id'];
+                var cityName = decodedData['city']['name'];
+
+                print('temparature : $temperature, condition : $condition, cityName : $cityName');
+
+              } else {}
+            }
+
+
+- Dart Geolocation
+                
+https://pub.dev/packages/geolocator#-readme-tab-](https://pub.dev/packages/geolocator#-readme-tab-
+
+            Position position = await Geolocator()
+                .getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+                
+                
+- Dart Error Handling - try, catch
+
+            void getLocation() async {
+              try {
+                Position position = await Geolocator()
+                    .getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+                print(position);
+
+                //유저가 permission을 거절
+                //유저가 GPS 닿지 않는 곳이 있음.
+              } catch(error){
+
+                print(error);
+              }
+            }
+            
+- Dart Throw Error
+
+            void somethingThatExpectsLessThan(int n){
+              if(n > 10){
+                throw 'n is great than 10, n should always be less than 10.';
+              }
+            }
+
+            
+- Widget Lifecycle
+            
+Stateless Widget은 build( ) 하나만 가짐
+
+Stateful Widget
+1. initState( )
+2. build( )
+3. deactivate( )
+
+
+- Await keyword 사용
+
+            void getLocation() async {
+               Position position = await Geolocator()
+                   .getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+               print(position);
+            }
+
+- Future 값을 지정
+Future를 반환하는 메소드일 때만 await keyword를 붙일 수 있다.
+
+            void getLocation() async {
+               Future<Position> position = Geolocator()
+                   .getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+               print(position);
+            }
+
+
+- Dart Async
+
+                    import 'dart:io';
+
+                    void main() {
+                      performTasks();
+                    }
+                        
+                    //Async Function
+                    void performTasks() async {
+                      task1();
+                      String result = await task2();
+                      task3(result);
+                    }
+
+                    void task1() {
+                      print('task1 complete');
+                    }
+                        
+                    //Future<String> => await에서 반환할 값 String.
+                    Future<String> task2() async {
+                      Duration threeSeconds = Duration(seconds: 3);
+
+                      String result;
+
+                      await Future.delayed(threeSeconds, (){
+                        result = 'task2 complete';
+                        print(result);
+                      });
+
+                      return result;
+                    }
+
+                    void task3(String task2Data) {
+                      print('task3 complete with $task2Data');
+                    }
+
+
+
+
+
 **20/01/25**
 
 
