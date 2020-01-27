@@ -2,6 +2,165 @@
 
 **20/01/27**
 
+- Dropdown
+its hierarchy
+
+- DropdownButton<DataType>
+    - value
+    - items [ ]
+        - DropDownMenuItem
+            - child
+            - value
+
+                        DropdownButton<String>(
+                          value: selectedCurrency,
+                          items: [
+                            DropdownMenuItem(
+                              child: Text('USD'),
+                              value: 'USD',
+                            ),
+                            DropdownMenuItem(
+                              child: Text('EUR'),
+                              value: 'EUR',
+                            ),
+                            DropdownMenuItem(
+                              child: Text('GBP'),
+                              value: 'GBP',
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCurrency = value;
+                            });
+                          },
+                        ),
+
+
+- Loop
+
+            List<DropdownMenuItem> getDropdownItems() {
+              List<DropdownMenuItem<String>> dropdownMenus = [];
+
+              for (String currency in currenciesList) {
+                
+                var newItem = DropdownMenuItem(
+                  child: Text(currency),
+                  value: currency,
+                );
+
+                dropdownMenus.add(newItem);
+              }
+              return dropdownMenus;
+            }
+=> usage
+
+            Container(
+                      height: 150.0,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.only(bottom: 30.0),
+                      color: Colors.lightBlue,
+                      child: DropdownButton<String>(
+                      value: selectedCurrency,
+                      items: getDropdownItems(), //loop를 통해서 가져온 value들.
+                        onChanged: (value) {
+                  setState(() {
+                    selectedCurrency = value;
+                  });
+                },
+              ),
+            ),
+            
+- Cupertino TimePicker
+its hierarchy
+    - CupertinoPicker
+      - itemExtent
+      - backgroundColor
+      - onSelectedItemChanged: (selectedIndex) {}
+      - children:  
+
+            CupertinoPicker(
+                itemExtent: 32.0,
+                backgroundColor: Colors.lightBlue,
+                onSelectedItemChanged: (selectedIndex) {
+                  print(selectedIndex);
+                },
+                children: getPickerItems(),
+            ),
+            
+- Import 관련 키워드
+
+import 'library' as
+
+import 'library' show
+
+import 'library' hide
+                
+            import 'dart:io' show Platform;     // import 관련 키워드,
+                                                // show.. 'relevant part'만 가져와라
+                                                // hide.. 특정 part만 가져오지 마라
+                                                // as.. 특정 이름으로 가져와라
+    
+-  Platform Specific Design
+'dart:io'라는 flutter 기본 모듈에서 제공되는 것으로 로직을 만들어준다.
+
+            //Android
+            DropdownButton<String> androidDropDown() {
+              List<DropdownMenuItem<String>> dropdownItems = [];
+
+              for (String currency in currenciesList) {
+                var newItem = DropdownMenuItem(
+                  child: Text(currency),
+                  value: currency,
+                );
+
+                dropdownItems.add(newItem);
+              }
+
+              return DropdownButton<String>(
+                value: selectedCurrency,
+                items: dropdownItems,
+                onChanged: (value) {
+                  setState(() {
+                    selectedCurrency = value;
+                  });
+                },
+              );
+            }
+
+            //IOS
+            CupertinoPicker iOSPicker() {
+              List<Text> currencies = [];
+              for (String currency in currenciesList) {
+                currencies.add(
+                  Text(
+                    currency,
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }
+
+              return CupertinoPicker(
+                itemExtent: 32.0,
+                backgroundColor: Colors.lightBlue,
+                onSelectedItemChanged: (selectedIndex) {
+                  print(selectedIndex);
+                },
+                children: currencies,
+              );
+            }
+
+            //**이 부분
+            Widget getPicker(){
+
+              if(Platform.isIOS){
+                return iOSPicker();
+              } else if (Platform.isAndroid){
+                return androidDropDown();
+              }
+
+            }
+
+
 - Passing Data Backwards Through the Navigation Stack
 
 데이터 넘기는 부분
