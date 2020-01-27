@@ -1,5 +1,132 @@
 # flutter_bootcamp
 
+**20/01/27**
+
+- Passing Data Backwards Through the Navigation Stack
+
+데이터 넘기는 부분
+
+        Navigator.pop(context, cityName); //p1, p2
+
+데이터 받는 부분
+
+        onPressed: () async {
+        var typedName = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return CityScreen();
+            },
+          ),
+        );
+        if (typedName != null) {
+          var weatherData =
+              await weather.getCityWeather(typedName);
+          updateUI(weatherData);
+        }
+        
+
+=> 전반적으로 android intent와 유사하다.
+⇒ 기본적으로 Navigator.push 는 return 값이 있는데 그게 다른 화면에서 넘어오는 값이다. 
+⇒ 유저가 언제 'pop'할지 모른다. 그러므로 async task다.
+
+
+- TextField
+    - style
+    - decoration
+        - InputDecoration
+            - filled
+            - fillColor
+            - icon
+        - hintText
+        - hintStyle
+        - border
+            - OutlineInputBorder
+                - borderRadius
+                - borderSide
+    - onChange(value)
+
+
+            TextField(
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  icon: Icon(
+                    Icons.location_city,
+                    color: Colors.white,
+                  ),
+                  hintText: 'Enter City Name',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+            ),
+
+- variable inside of String 
+
+                String text = 'hello world $name';
+
+- object inside of String
+                    
+                String text = 'hello world ${name}';
+                
+- state 값 공유
+1. 기본적으로 _state는 widget이라는 object를 가지고 있다.
+2. 이 widget은 state 그 자체이다. 여기 있는 값들과 함수에 접근할 수 있다.
+
+                //State - 생성자에서 값을 받아옴
+                class LocationScreen extends StatefulWidget {
+                  LocationScreen({this.locationWeather});
+
+                  final locationWeather;
+
+                  @override
+                  _LocationScreenState createState() => _LocationScreenState();
+                }
+
+                class _LocationScreenState extends State<LocationScreen> {
+
+                  int temperature;
+                  int condition;
+                  String cityName;
+
+                  @override
+                  void initState() {
+                    super.initState();
+                    updateUI(widget.locationWeather); //**이 widget이 `state`를 의미.
+                  }
+
+                  void updateUI(dynamic weatherData) {
+                    double temp = weatherData['main']['temp'];
+                    temperature = temp.toInt();
+                    condition = weatherData['weather'][0]['id'];
+                    cityName = weatherData['name'];
+                  }
+
+                  @override
+                  Widget build(BuildContext context) {
+                        return Text('Hello World');
+                    }
+
+                }
+            
+- dynamic
+파라미터에서 데이터 타입을 지정하기 애매할 때 사용
+    
+            void updateUI(dynamic weatherData) {
+              double temp = weatherData['main']['temp'];
+              temperature = temp.toInt();
+              condition = weatherData['weather'][0]['id'];
+              cityName = weatherData['name'];
+            }
+                    
 
 **20/01/26**
 

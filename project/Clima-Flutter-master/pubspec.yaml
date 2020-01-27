@@ -4,15 +4,18 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
-  geolocator: ^5.2.0
+  geolocator: ^2.1.1
+  permission_handler: "2.1.2"
+  google_api_availability: "1.0.4"
   http: ^0.12.0+4
+  flutter_spinkit: ^4.1.1
 
 dev_dependencies:
   flutter_test:
