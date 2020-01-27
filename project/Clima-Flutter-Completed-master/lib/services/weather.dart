@@ -10,7 +10,7 @@ class WeatherModel {
     NetworkHelper networkHelper = NetworkHelper(
         '$openWeatherMapURL?q=$cityName&appid=$apiKey&units=metric');
 
-    var weatherData = await networkHelper.getData(); 
+    var weatherData = await networkHelper.getData();
     return weatherData;
   }
 
