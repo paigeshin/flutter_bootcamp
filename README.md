@@ -1,5 +1,448 @@
 # flutter_bootcamp
+**20/02/01**
 
+- Multipe Route Recap
+
+        import 'package:flutter/material.dart';
+        import 'package:flash_chat/screens/welcome_screen.dart';
+        import 'package:flash_chat/screens/login_screen.dart';
+        import 'package:flash_chat/screens/registration_screen.dart';
+        import 'package:flash_chat/screens/chat_screen.dart';
+
+        import 'screens/chat_screen.dart';
+        import 'screens/login_screen.dart';
+        import 'screens/registration_screen.dart';
+        import 'screens/welcome_screen.dart';
+        import 'screens/welcome_screen.dart';
+
+        void main() => runApp(FlashChat());
+
+        class FlashChat extends StatelessWidget {
+          @override
+          Widget build(BuildContext context) {
+            return MaterialApp(
+              theme: ThemeData.dark().copyWith(
+                textTheme: TextTheme(
+                  body1: TextStyle(color: Colors.black54),
+                ),
+              ),
+              initialRoute: 'welcome_screen',
+              routes: <String, WidgetBuilder> {
+                'welcome_screen': (context) => WelcomeScreen(),
+                'login_screen': (context) => ChatScreen(),
+                'registration_screen': (context) => RegistrationScreen(),
+                'chat_screen': (context) => LoginScreen()
+              },
+            );
+          }
+        }
+
+- Route refactoring
+
+        class WelcomeScreen extends StatefulWidget {
+
+          static const String id = 'welcome_string';
+
+          @override
+          _WelcomeScreenState createState() => _WelcomeScreenState();
+        }
+        
+        
+        import 'package:flutter/material.dart';
+        import 'package:flash_chat/screens/welcome_screen.dart';
+        import 'package:flash_chat/screens/login_screen.dart';
+        import 'package:flash_chat/screens/registration_screen.dart';
+        import 'package:flash_chat/screens/chat_screen.dart';
+
+        import 'screens/chat_screen.dart';
+        import 'screens/chat_screen.dart';
+        import 'screens/login_screen.dart';
+        import 'screens/registration_screen.dart';
+        import 'screens/welcome_screen.dart';
+        import 'screens/welcome_screen.dart';
+        import 'screens/welcome_screen.dart';
+        import 'screens/welcome_screen.dart';
+        import 'screens/welcome_screen.dart';
+        import 'screens/welcome_screen.dart';
+
+        void main() => runApp(FlashChat());
+
+        class FlashChat extends StatelessWidget {
+          @override
+          Widget build(BuildContext context) {
+            return MaterialApp(
+              theme: ThemeData.dark().copyWith(
+                textTheme: TextTheme(
+                  body1: TextStyle(color: Colors.black54),
+                ),
+              ),
+
+                        /* 바뀐 부분, static로 각각의 화면에 달려있는 id 값을 가져온다. */ 
+              initialRoute: WelcomeScreen.id,
+              routes: <String, WidgetBuilder> {
+                WelcomeScreen.id: (context) => WelcomeScreen(),
+                  /* 바뀐 부분 */
+
+                        'login_screen': (context) => LoginScreen(),
+                'registration_screen': (context) => RegistrationScreen(),
+                'chat_screen': (context) => ChatScreen()
+              },
+            );
+          }
+        }
+        
+        
+- Flutter Hero Animnations - Basic
+    - Hero widget을 사용해주려면 tag를 지줭해줘야 한다.
+    - Navigator에 transition을 추가해준다.
+    
+                //Navigator가 trigger 될 때마다 같은 tag를 가진 객체들이의 animation이 추가된다.
+                //여기서는 height이 다르므로 height에 애니메이션 효과가 추가된다.
+                Hero(
+                  tag: 'logo',
+                  child: Container(
+                    child: Image.asset('images/logo.png'),
+                    height: 60.0,
+                  ),
+                ),
+        
+        
+                //Navigator가 trigger 될 때마다 같은 tag를 가진 객체들이의 animation이 추가된다.
+                //여기서는 height이 다르므로 height에 애니메이션 효과가 추가된다.
+                Hero(
+                  tag: 'logo',
+                  child: Container(
+                    height: 200.0,
+                    child: Image.asset('images/logo.png'),
+                  ),
+                ),
+                
+- Custom Flutter Animations with the Animation Controller
+    - A Ticker
+    - Animation Controller
+    - An Animation Value
+    
+**➡️ Ticker**
+
+⇒ It triggers animation 
+
+**➡️ Animation Controller**
+
+⇒ Animation Manager  (Start, Stop, Duration)
+
+**➡️ Animation Value**
+
+⇒ The thing which enables actually the animation. ex) Opacity
+
+* AnimationController
+
+                
+                class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin {
+
+                  AnimationController controller;
+
+                  @override
+                  void initState() {
+                    super.initState();
+
+                    controller = AnimationController(
+                        duration: Duration(seconds: 1),
+                        vsync: this,
+                    );
+                    
+                    controller.forward();
+
+                    //setState를 호출해야한다.
+                    controller.addListener(() {
+                      setState(() {});
+                            print(controller.value);
+                    });
+
+                }
+
+                @override
+                  Widget build(BuildContext context) {
+
+                    return Scaffold(
+                      backgroundColor: Colors.red.withOpacity(controller.value),
+                            body: Padding(...),
+
+                        );
+                  }
+                }
+
+    전체 순서
+    1. implements `Animation Type` with `with` keyword 
+    2. define Controller 
+        - duration
+        - vsync: this
+        - upperbound
+        - lowerbound
+    3. controller.forward(); ⇒ 다른 애니메이션을 호출해도 된다.
+    4. controller.addListener() ⇒ 안에다가 callback으로 반드시 setState()를 호출해준다. 
+    5. 아래 적용하고 싶은 value에다가 animation을 적용.  
+        - `backgroundColor: Colors.red.withOpacity(controller.value)`
+    6. Timing Function
+
+                AnimationController controller;
+                Animation animation; //Timing function과 관련됨
+
+                @override
+                void initState() {
+                  super.initState();
+
+                  controller = AnimationController(
+                      duration: Duration(seconds: 1),
+                      vsync: this,
+                      upperBound: 100.0,
+                  );
+
+                      //Timing function setup
+                  animation = CurvedAnimation(parent: controller, curve: Curves.decelerate);
+                  
+                  controller.forward();
+
+                  //setState를 호출해야한다.
+                  controller.addListener(() {
+                    setState(() {});
+                    print(controller.value);
+                  });
+                }
+                
+    ⇒ timing function을 적용했을 때는, `controller.value` 가 아니라 `controller.animation` 으로 호출해야 timing function이 적용된다. 
+    ❗️ timing function을 적용할 때는, upperbound나 lowerbound가 1보다 큰 value를 가지면 안된다. 0.1 ~ 1 사이에서 값이 진행되기 때문이다. ⇒ 실제로 적용할 widget들에게는 *100을 해줘야 animation effect가 일어난다.
+    
+7. animation Listener ⇒ animation을 적용한 후에 각각의 status를 잡아와서 로직을 짜줄 수 있음.
+                    
+                //setState를 호출해야한다.
+                animation.addStatusListener((status) {
+                  if(status == AnimationStatus.completed){
+                    controller.reverse(from: 1.0);
+                  } else if (status == AnimationStatus.dismissed){
+                    controller.forward();
+                  }
+                }); 
+                    
+8. dispose, @override  ⇒ 메모리 누수 방지 , animation을 사용할 때 반드시 사용하자.
+
+            
+            @override
+            void dispose() {
+              controller.dispose();
+              super.dispose();
+
+            }
+            
+            
+9. ColorTween ⇒ color animation을 위한 property
+
+            
+            animation = ColorTween(begin: Colors.red, end: Colors.blue).animate(controller);
+            
+
+- Dart Mixins
+    - Mixins are a way of reusing a class's code in multiple class hierarchies
+    - 자바의 interface와는 다르게, 함수 정의가 가능하다.
+    
+                void main(){
+                
+                //  Animal().move();
+                //  Fish().move();
+                //  Bird().move();
+                
+                    //from parent class
+                    Duck().move();
+                
+                    //from mixin
+                    Duck().swim();
+                    Duck().fly();
+                
+                }
+                
+                class Animal {
+                
+                  void move(){
+                    print('Changed Position');
+                  }
+                
+                }
+                
+                class Fish extends Animal {
+                
+                  @override
+                  void move() {
+                    super.move();
+                    print('by swimming');
+                  }
+                
+                }
+                
+                class Bird extends Animal {
+                
+                  @override
+                  void move() {
+                    super.move();
+                    print('by flying');
+                  }
+                
+                }
+                
+                
+                mixin CanSwim {
+                  void swim(){
+                    print('Changing position by Swwimming');
+                  }
+                }
+                
+                mixin CanFly {
+                  void fly(){
+                    print('Changing position by flying');
+                  }
+                }
+                
+                class Duck extends Animal with CanSwim, CanFly {
+                
+                }
+                
+                class AirPlane with CanFly {
+                
+                }
+
+- Packaged Animation
+
+            dependencies:
+            flutter:
+              sdk: flutter
+
+            cupertino_icons: ^0.1.2
+            animated_text_kit: ^1.3.0
+            
+            
+            TypewriterAnimatedTextKit(
+              text: ['Flash Chat'],
+              textStyle: TextStyle(
+                fontSize: 45.0,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            
+            
+- const, same style에서 특정 값만 바꾸기
+        - copywith를 쓰면 const로 define한 value들을 변수처럼 마음대로 바꿀 수 있다.
+        
+        
+            const kTextFieldDecoration = InputDecoration(
+              hintText: 'Enter your email',
+              contentPadding:
+              EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(32.0)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide:
+                BorderSide(color: Colors.lightBlueAccent, width: 1.0),
+                borderRadius: BorderRadius.all(Radius.circular(32.0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide:
+                BorderSide(color: Colors.lightBlueAccent, width: 2.0),
+                borderRadius: BorderRadius.all(Radius.circular(32.0)),
+              ),
+            );
+
+            //아래처럼 widget에서 사용해준다.
+            TextField(
+                onChanged: (value) {
+                  //Do something with the user input.
+                },
+                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
+            ),
+
+            TextField(
+              onChanged: (value) {
+                //Do something with the user input.
+              },
+              decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
+            ),
+            
+
+-  Firebase - Android Setup
+
+            def localProperties = new Properties()
+            def localPropertiesFile = rootProject.file('local.properties')
+            if (localPropertiesFile.exists()) {
+                localPropertiesFile.withReader('UTF-8') { reader ->
+                    localProperties.load(reader)
+                }
+            }
+            
+            
+            def flutterRoot = localProperties.getProperty('flutter.sdk')
+            if (flutterRoot == null) {
+                throw new FileNotFoundException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+            }
+            
+            def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+            if (flutterVersionCode == null) {
+                flutterVersionCode = '1'
+            }
+            
+            def flutterVersionName = localProperties.getProperty('flutter.versionName')
+            if (flutterVersionName == null) {
+                flutterVersionName = '1.0'
+            }
+            
+            apply plugin: 'com.android.application'
+            apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+            
+            android {
+                compileSdkVersion 29
+            
+                lintOptions {
+                    disable 'InvalidPackage'
+                }
+            
+                defaultConfig {
+                    // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+                    applicationId "co.appbrewery.flash_chat"
+                    minSdkVersion 16
+                    targetSdkVersion 29
+                    versionCode flutterVersionCode.toInteger()
+                    versionName flutterVersionName
+                    multiDexEnabled true
+                }
+            
+                buildTypes {
+                    release {
+                        // TODO: Add your own signing config for the release build.
+                        // Signing with the debug keys for now, so `flutter run --release` works.
+                        signingConfig signingConfigs.debug
+                    }
+                }
+            }
+            
+            flutter {
+                source '../..'
+            }
+            
+            dependencies {
+                implementation 'androidx.multidex:multidex:2.0.0'
+            }
+1. app/src/build.gradle, 여기서 `applicationId "co.appbrewery.flash_chat"` 값을 가져온다.
+2. `google-service.json` 파일을 다움로드 받는다.
+3. app folder에 가져온다. 
+4. Gradle 에 추가 (Project Level, App Level Gradle 마다 필요한 코드를 추가하면 된다)
+
+- Firebase iOS setup
+
+1. ios folder에 `Runner.xcodeproj` 를 연다. Xcode를 통해서 연다.
+    - Bundle Identifier가 app id다.
+2. GoogleService-Info.plist 를 다운받는다
+3. Runnder Project에 반드시 `xcode` 를 통해 Runner Folder에 넣는다. ㅣ스"
+
+! Cocoa pod update ⇒ `pod repo update` , `sudo gem install cocoapods --pre`
+
+            
 **20/01/27**
 
 - Dropdown
