@@ -1,4 +1,178 @@
 # flutter_bootcamp
+**20/02/02**
+
+- Firebase Authentication
+        
+        onPressed: () async {
+          try {
+            //유저 저장
+            final newUser = await _auth.createUserWithEmailAndPassword(
+                email: email, password: password);
+
+            if(newUser != null){
+              Navigator.pushNamed(context, ChatScreen.id);
+            }
+
+          } catch (error) {
+            print(error);
+          }
+        },
+        
+        
+        final _auth = FirebaseAuth.instance;
+        FirebaseUser loggedInUser;
+
+        @override
+        void initState() {
+          super.initState();
+          getCurrentUser();
+          print(loggedInUser.email);
+        }
+
+        void getCurrentUser() async {
+          try {
+            final user = await _auth.currentUser();
+            if (user != null) {
+              loggedInUser = user;
+            }
+          } catch (error) {
+            print(error);
+          }
+        }
+        
+- Firestore 
+    - console창에서 firestore를 setup한다
+    - 항상 key-value로 값을 잡거나 넣어줌.
+    
+            final _firestore =  Firestore.instance;
+
+            _firestore.collection('messages').add({
+                                'sender': loggedInUser.email,
+                                'text' : messageText
+            });
+
+    -  getDoucment , document는 nosql에서 table 개념
+    
+            void getMessages() async {
+              final messages = await _firestore.collection('messages').getDocuments();
+              for(var message in messages.documents){
+                print(message.data);
+              }
+            }
+
+    - Firestore Stream, 실시간 통신
+    
+            void messageStream() async {
+             await for(var snapshot in _firestore.collection('messages').snapshots()){
+               for(var message in snapshot.documents){
+                 print(message.data);
+               }
+             }
+            }
+            
+        ⇒ `snapshot`은 그냥 하나의 data라고 보면된다. firestore에 있는 데이터들을 불러옴.
+
+        ⇒ `snapshot` 은 data stream을 의미한다.
+        
+- streamBuilder
+    - flutter에서 기본으로 제공
+    - 실시간 데이터 핸들링
+    - snapshot.hasData
+    - snapshot.data.documents
+    
+                StreamBuilder(
+                  stream: _firestore.collection('messages').snapshots(),
+                  builder: (context, snapshot){
+                    List<Text> messageWidgets = [];
+
+                    if(!snapshot.hasData){
+                      return Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.lightBlueAccent,
+                        ),
+                      );
+                    }
+
+                    if(snapshot.hasData){
+                      final messages = snapshot.data.documents;
+
+                      for(var message in messages){
+                        final messageText = message.data['text'];
+                        final messageSender = message.data['sender'];
+
+                        final messageWidget = Text('$messageText from $messageSender');
+
+                        messageWidgets.add(messageWidget);
+                      }
+                    }
+                    return Column(
+                      children: messageWidgets,
+                    );
+
+                  },
+                ),
+                
+- TextEditingController
+    1. TextEditingController 라는 객체를 생성한다
+    2. control할 textfield를 적용
+    3. 어떤 이벤트마다 특정 built-in 함수를 호출하여 제어할 수 있다.
+
+                final messageTextController = TextEditingController(); //**객체생성
+
+                TextField(
+                      controller: messageTextController, //**control할 textfield 
+                      onChanged: (value) {
+                        //Do something with the user input.
+                        messageText = value;
+                      },
+                      decoration: kMessageTextFieldDecoration,
+                    ),
+
+                //event trigger, clear. 
+                FlatButton(
+                      onPressed: () {
+                        messageTextController.clear();   //**이쪽 코드
+                        //Implement send functionality.
+                        //messageText + loggedInUser.email
+                        _firestore.collection('messages').add(
+                            {'sender': loggedInUser.email, 'text': messageText});
+                      },
+                      child: Text(
+                        'Send',
+                        style: kSendButtonTextStyle,
+                      ),
+                    ),
+                    
+- Flexible Widget
+    -Responsive UI
+    
+                Flexible(
+                child: Hero(
+                  tag: 'logo',
+                  child: Container(
+                    height: 200.0,
+                    child: Image.asset('images/logo.png'),
+                  ),
+                ),
+                
+- Listview
+        
+            return Expanded(
+              child: ListView(
+                reverse: true,
+                children: messageWidgets,
+              ),
+            );
+            
+⇒ reverse: true 를 하면 화면이 밑에 고정됨
+
+- snapshot 데이터 위치 변경
+    -뒤에 reversed를 붙여준다.
+    
+        final messages = snapshot.data.documents.reversed
+        
+
+
 **20/02/01**
 
 - Multipe Route Recap
